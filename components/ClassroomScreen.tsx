@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { askStudyAssistant } from '../services/geminiService';
+import { SUBJECTS } from '../constants';
 
 interface ClassroomScreenProps {
   subjectId: string;
@@ -8,6 +9,7 @@ interface ClassroomScreenProps {
 }
 
 const ClassroomScreen: React.FC<ClassroomScreenProps> = ({ subjectId, onBack }) => {
+  const subject = SUBJECTS.find(s => s.id === subjectId) || SUBJECTS[0];
   const [activeTab, setActiveTab] = useState('Modul');
   const [question, setQuestion] = useState('');
   const [aiResponse, setAiResponse] = useState<string | null>(null);
@@ -17,7 +19,8 @@ const ClassroomScreen: React.FC<ClassroomScreenProps> = ({ subjectId, onBack }) 
     e.preventDefault();
     if (!question.trim()) return;
     setLoading(true);
-    const response = await askStudyAssistant('Matematika', question);
+    setAiResponse(null);
+    const response = await askStudyAssistant(subject.name, question);
     setAiResponse(response || "Gagal mendapatkan jawaban.");
     setLoading(false);
   };
@@ -31,8 +34,8 @@ const ClassroomScreen: React.FC<ClassroomScreenProps> = ({ subjectId, onBack }) 
               <span className="material-icons-round">arrow_back_ios_new</span>
             </button>
             <div>
-              <h1 className="text-xl font-bold">Matematika</h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Kelas XI • MIPA 2</p>
+              <h1 className="text-xl font-bold">{subject.name}</h1>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Kelas XI • {subject.teacher}</p>
             </div>
           </div>
           <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-sm text-slate-600 dark:text-slate-300">
@@ -49,7 +52,7 @@ const ClassroomScreen: React.FC<ClassroomScreenProps> = ({ subjectId, onBack }) 
             <span className="text-xs font-medium text-primary">Lihat Semua</span>
           </div>
           <div className="relative group overflow-hidden rounded-xl aspect-video bg-slate-200 dark:bg-slate-800 shadow-lg">
-            <img alt="Hero" className="w-full h-full object-cover" src="https://picsum.photos/seed/math/600/350" />
+            <img alt="Hero" className="w-full h-full object-cover" src={`https://picsum.photos/seed/${subject.name}/600/350`} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
             <div className="absolute inset-0 flex items-center justify-center">
               <button className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/90 text-white shadow-2xl backdrop-blur-sm transition-transform active:scale-90">
@@ -57,8 +60,8 @@ const ClassroomScreen: React.FC<ClassroomScreenProps> = ({ subjectId, onBack }) 
               </button>
             </div>
             <div className="absolute bottom-4 left-4 right-4 text-white">
-              <p className="text-xs font-medium opacity-80 mb-1">Bab 4: Trigonometri</p>
-              <h3 className="text-lg font-bold leading-tight">Penerapan Identitas Trigonometri dalam Kehidupan</h3>
+              <p className="text-xs font-medium opacity-80 mb-1">Bab 4: Topik Utama</p>
+              <h3 className="text-lg font-bold leading-tight">Pendalaman Materi {subject.name} Terkini</h3>
             </div>
           </div>
         </section>
@@ -78,11 +81,11 @@ const ClassroomScreen: React.FC<ClassroomScreenProps> = ({ subjectId, onBack }) 
           </div>
         </nav>
 
-        {/* AI Assistant (Feature addition) */}
+        {/* AI Assistant */}
         <div className="mt-6 p-4 bg-primary/5 dark:bg-primary/10 border border-primary/20 rounded-2xl">
           <div className="flex items-center gap-2 mb-3">
             <span className="material-icons-round text-primary text-xl">psychology</span>
-            <h3 className="text-sm font-bold text-primary">AI Study Assistant</h3>
+            <h3 className="text-sm font-bold text-primary">Asisten {subject.name} AI</h3>
           </div>
           <form onSubmit={handleAskAI} className="space-y-3">
             <div className="relative">
@@ -90,16 +93,17 @@ const ClassroomScreen: React.FC<ClassroomScreenProps> = ({ subjectId, onBack }) 
                 type="text" 
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
-                placeholder="Tanyakan rumus atau konsep..."
+                placeholder={`Tanyakan tentang ${subject.name}...`}
                 className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 px-4 text-sm focus:ring-primary focus:border-primary pr-10"
               />
-              <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 text-primary active:scale-90 transition-transform">
+              <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 text-primary active:scale-90 transition-transform disabled:opacity-50" disabled={loading}>
                 <span className="material-icons-round">send</span>
               </button>
             </div>
-            {loading && <div className="text-xs text-slate-400 animate-pulse">Berpikir...</div>}
+            {loading && <div className="text-[10px] text-primary animate-pulse font-bold ml-1">Menganalisis...</div>}
             {aiResponse && (
-              <div className="p-3 bg-white dark:bg-slate-800 rounded-xl text-xs text-slate-600 dark:text-slate-300 leading-relaxed border border-slate-100 dark:border-slate-700">
+              <div className="p-3 bg-white dark:bg-slate-800 rounded-xl text-xs text-slate-600 dark:text-slate-300 leading-relaxed border border-slate-100 dark:border-slate-700 animate-[fadeIn_0.3s_ease-out]">
+                <div className="font-bold text-primary mb-1">Jawaban:</div>
                 {aiResponse}
               </div>
             )}
@@ -113,21 +117,8 @@ const ClassroomScreen: React.FC<ClassroomScreenProps> = ({ subjectId, onBack }) 
               <span className="material-icons-round text-3xl">picture_as_pdf</span>
             </div>
             <div className="flex-1">
-              <h4 className="text-sm font-semibold">Bab 1: Eksponen & Logaritma</h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400">PDF • 4.2 MB • Diperbarui 2 hari lalu</p>
-            </div>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400">
-              <span className="material-icons-round">file_download</span>
-            </button>
-          </div>
-
-          <div className="flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
-            <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500">
-              <span className="material-icons-round text-3xl">picture_as_pdf</span>
-            </div>
-            <div className="flex-1">
-              <h4 className="text-sm font-semibold">Latihan Soal UTS Semester 1</h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400">PDF • 1.8 MB • Diperbarui 1 minggu lalu</p>
+              <h4 className="text-sm font-semibold">Materi Pertemuan 1</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400">PDF • 2.4 MB</p>
             </div>
             <button className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400">
               <span className="material-icons-round">file_download</span>
@@ -136,10 +127,12 @@ const ClassroomScreen: React.FC<ClassroomScreenProps> = ({ subjectId, onBack }) 
         </div>
       </main>
 
-      {/* Floating Action Button */}
-      <button className="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center active:scale-95 transition-transform z-50">
-        <span className="material-icons-round text-3xl">add</span>
-      </button>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(5px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };

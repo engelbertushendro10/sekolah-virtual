@@ -9,7 +9,7 @@ interface MobileLayoutProps {
 }
 
 const MobileLayout: React.FC<MobileLayoutProps> = ({ children, activeScreen, onNavigate }) => {
-  const showNav = activeScreen !== 'WELCOME';
+  const showNav = activeScreen !== 'WELCOME' && activeScreen !== 'SCANNER';
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-slate-100 dark:bg-slate-900">
@@ -49,7 +49,10 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ children, activeScreen, onN
             </button>
             
             <div className="relative -top-8">
-              <button className="w-14 h-14 bg-primary text-white rounded-full shadow-lg shadow-primary/40 flex items-center justify-center active:scale-95 transition-transform">
+              <button 
+                onClick={() => onNavigate('SCANNER')}
+                className="w-14 h-14 bg-primary text-white rounded-full shadow-lg shadow-primary/40 flex items-center justify-center active:scale-95 transition-transform"
+              >
                 <span className="material-icons-round text-3xl">qr_code_scanner</span>
               </button>
             </div>

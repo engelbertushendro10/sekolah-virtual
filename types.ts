@@ -1,5 +1,5 @@
 
-export type ScreenType = 'WELCOME' | 'DASHBOARD' | 'SUBJECTS' | 'CLASSROOM' | 'TASKS' | 'REPORT';
+export type ScreenType = 'WELCOME' | 'DASHBOARD' | 'SUBJECTS' | 'CLASSROOM' | 'TASKS' | 'REPORT' | 'SCANNER';
 
 export interface Subject {
   id: string;

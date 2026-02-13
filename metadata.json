@@ -1,5 +1,5 @@
 {
-  "name": "Copy of Sekolah Virtual - Learning Management System",
+  "name": "Sekolah Virtual - LMS",
   "description": "A comprehensive virtual school application with student dashboards, classroom management, task tracking, and academic reporting, featuring an AI study assistant.",
   "requestFramePermissions": [
     "camera",
